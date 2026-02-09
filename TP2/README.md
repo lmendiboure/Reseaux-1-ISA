@@ -32,7 +32,7 @@ Quelques-uns de supplémentaires ici par rapport à la dernière séance...
 
 ---
 
-## 🧱 Architecture du TP
+## Architecture du TP
 
 Là aussi on va avoir des modifications à observer. On quitte notre simple réseau LAN à deux machines vers un réseau dans lequel plus de machines pourront intervenir : 
 
