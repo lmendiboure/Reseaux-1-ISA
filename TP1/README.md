@@ -222,11 +222,7 @@ Faites de même sur Rasp 2 mais avec l'adresse 192.168.42.2/24.
 
 ## 2.2 — Tester et observer ARP
 
-Sur Rasp 1, après avoir lancé une capture dans wireshark :
-
-```bash
-ping 192.168.42.2
-```
+Sur Rasp 1, après avoir lancé une capture dans wireshark, faites un ping vers Rasp 2.
 
 On devrait donc observer :
 1. résolution ARP,
