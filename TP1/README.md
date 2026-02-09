@@ -209,35 +209,36 @@ ip addr add 192.168.42.1/24 dev eth0
 ip link set eth0 up
 ```
 
-Faites de même sur Rasp 2 :
-```bash
-ip addr add 192.168.42.2/24 dev eth0
-ip link set eth0 up
-```
-
 Ce que ça va nous permettre de faire ?
 
 - `ip addr add` : assigne une IP à une interface,
 - `ip link set up` : active l’interface.
+
+
+Faites de même sur Rasp 2 mais avec l'adresse 192.168.42.2/24.
+
 
 ---
 
 ## 2.2 — Tester et observer ARP
 
 Sur Rasp 1, après avoir lancé une capture dans wireshark :
+
 ```bash
 ping 192.168.42.2
 ```
+
 On devrait donc observer :
 1. résolution ARP,
 2. puis échange ICMP.
 
 Une autre façon de l'observer : 
+
 ```bash
 ip neigh
 ```
 
-Elle affiche la table ARP dont  nous avons déjà discuté à plusieurs reprises :
+Elle affiche la table ARP dont nous avons déjà discuté à plusieurs reprises :
 
 - correspondance IP ↔ MAC,
 - uniquement pour les hôtes du LAN.
@@ -299,7 +300,7 @@ sudo systemctl start ssh
 De retour sur le rasp 1, après avoir une nouvelle fois nettoyé la table ARP (`sudo ip neigh flush all`), et réouvert Wireshark, nous allons nous connecter en ssh sur l'utilisateur qui y existe :  
 
 ```bash
-ssh utilisateur@192.168.42.2
+ssh utilisateur@IP-USER-2
 ```
 
 Faisons attention à utiliser le bon user...
@@ -326,8 +327,8 @@ Le réseau est donc là pour le transport mais n'a pas du tout la main sur le co
 Si à présent on lance les commandes suivantes (bien sûr en faisant attention de lancer un client d'un côté et le serveur de l'autre !).
 
 ```bash
-nc -l 2222
-nc 192.168.42.2 2222
+nc -l 2222 # sur le serveur
+nc IP-SERVER 2222
 ```
 
 Si on essaye d'observer les paquets, quelles différences avec ce qui existait en ssh ? On est ici sur une communication TCP directe.
@@ -354,7 +355,7 @@ Tout d'abord, nous pouvons **changer le port ssh** :
 
 Sur le Rasp 2 dans le fichier `/etc/ssh/sshd_config`, modifiez Port `2222` puis relancez le service : `sudo systemctl restart ssh`.
 
-Depuis le Rasp 1, testez une connexion avec la commande suivante (en faisant toujours attention à l'utilisateur) : `ssh -p 2222 utilisateur@192.168.42.2` 
+Depuis le Rasp 1, testez une connexion avec la commande suivante (en faisant toujours attention à l'utilisateur) : `ssh -p 2222 utilisateur@IP-USER-2` 
 
 Est-ce que l'on observe ou non des différences avec le premier cas dans wireshark ?
 
