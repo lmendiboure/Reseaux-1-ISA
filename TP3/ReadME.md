@@ -47,7 +47,7 @@ Cette commande signifie :
 
 Le NAT sortant permet à plusieurs machines internes de partager une seule adresse visible.
 
-Question :\
+**Q.** :\
 Le NAT sortant empêche-t-il réellement les attaques ?\
 Ou masque-t-il simplement l'origine ?
 
@@ -70,7 +70,7 @@ appartient, 3. ne la modifie pas, 4. ne la transmet pas.
 
 Sans règle explicite, un routeur ne redirige rien.
 
-Réfléchissez :\
+**Q.** Réfléchissez :\
 Un routeur devrait-il rediriger automatiquement tout trafic entrant ?
 Pourquoi ?
 
@@ -89,7 +89,7 @@ Routeur transforme en → 192.168.42.2:22
 
 Cela se produit en PREROUTING, avant la décision de routage (à l'inverse du SNAT donc !).
 
-Pourquoi est ce que cette opération contrainrement à l'autre ne peut pas se réaliser en pré-routage ?
+**Q.** Pourquoi est ce que cette opération contrainrement à l'autre ne peut pas se réaliser en pré-routage ?
 
 ------------------------------------------------------------------------
 
@@ -104,6 +104,8 @@ envoie ce trafic vers le serveur réel (192.168.42.2) au port 22."
 
 Nous créons donc volontairement une porte d'entrée.
 
+**Q.** Quel peut être à votre avis l'intérêt d'une telle mise en place ? Quels peuvent être les risques ? https://irp.nain-t.net/doku.php/130netfilter:610-netfilter-plus
+
 ------------------------------------------------------------------------
 
 ## 4.2 Ajout de la règle DNAT
@@ -112,7 +114,7 @@ Nous créons donc volontairement une porte d'entrée.
 sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 2222 -j DNAT --to-destination 192.168.42.2:22
 ```
 
-Expliquez précisément :
+**Q.** Expliquez précisément :
 
 -   Quelle information est modifiée ?
 -   À quel moment ?
@@ -126,9 +128,9 @@ Expliquez précisément :
 sudo iptables -A FORWARD -p tcp -d 192.168.42.2 --dport 22 -j ACCEPT
 ```
 
-Pourquoi le routeur doit-il explicitement autoriser le passage ?
+**Q.** Pourquoi le routeur doit-il explicitement autoriser le passage ?
 
-Réfléchissez au rôle de la chaîne FORWARD. Un site éventuel pour en parler : https://www.digitalocean.com/community/tutorials/how-to-forward-ports-through-a-linux-gateway-with-iptables 
+**Q.** Réfléchissez au rôle de la chaîne FORWARD. Un site éventuel pour en parler : https://www.digitalocean.com/community/tutorials/how-to-forward-ports-through-a-linux-gateway-with-iptables 
 
 ------------------------------------------------------------------------
 
@@ -138,7 +140,7 @@ Réfléchissez au rôle de la chaîne FORWARD. Un site éventuel pour en parler 
 ssh -p 2222 192.168.10.1
 ```
 
-Expliquez :
+**Q.** Expliquez :
 
 -   Le client pense parler à qui ?
 -   Le serveur reçoit une connexion venant de qui ?
@@ -157,7 +159,7 @@ Complétez :
   Interface   IP source   IP destination
   ----------- ----------- ----------------
 
-Analysez :
+**Q.** Analysez :
 
 -   Pourquoi la destination change-t-elle entre les deux interfaces ?
 -   Pourquoi la source peut-elle rester identique ?
@@ -207,7 +209,7 @@ curl http://192.168.10.1:8080
 
 ## 6.3 Compréhension architecturale
 
-Répondez :
+**Q.** Répondez :
 
 1.  En quoi votre routeur joue-t-il le rôle d'une box domestique ?
 2.  Si le serveur HTTP contient une faille, que permet cette redirection
@@ -222,7 +224,7 @@ Une DMZ est une zone exposée mais isolée du réseau interne.
 
 Cherchez à comprendre à quoi sert une DMZ : https://www.fortinet.com/fr/resources/cyberglossary/what-is-dmz puis répondez aux questions suivantes.
 
-Dans votre architecture :
+**Q.** Dans votre architecture :
 
 -   Le serveur est-il isolé du reste du réseau ?
 -   Peut-il initier des connexions vers le réseau client ?
@@ -247,7 +249,7 @@ Puis :
 -   observez les compteurs iptables
 -   vérifiez les flux Wireshark
 
-Expliquez comment le routeur distingue les flux.
+**Q.** Expliquez comment le routeur distingue les flux.
 
 ------------------------------------------------------------------------
 
@@ -257,7 +259,7 @@ Modifiez la règle DNAT pour qu'elle n'accepte que les connexions venant d'une I
 
 Testez le comportement.
 
-Expliquez en quoi cela améliore la sécurité.
+**Q.** Expliquez en quoi cela améliore la sécurité.
 
 ------------------------------------------------------------------------
 
