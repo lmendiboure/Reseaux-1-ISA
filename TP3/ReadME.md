@@ -2,7 +2,7 @@
 
 ## Comprendre NAT sortant, DNAT et architecture réseau
 
-# Objectifs généraux du tP
+# Objectifs généraux du TP
 
 À l'issue de ce TP, vous devez être capables de :
 
@@ -232,7 +232,7 @@ Dans votre architecture :
 
 ------------------------------------------------------------------------
 
-# Et pour les plus rapides
+# Et pour aller plus loin
 
 ## Double exposition contrôlée
 
@@ -253,7 +253,7 @@ Expliquez comment le routeur distingue les flux.
 
 ## Limiter l'exposition
 
-Modifiez la règle DNAT pour qu'elle n'accepte que les connexions venant d'une IP spécifique.
+Modifiez la règle DNAT pour qu'elle n'accepte que les connexions venant d'une IP spécifique (vous devez donc trouver comment modifier cette règle).
 
 Testez le comportement.
 
