@@ -55,17 +55,12 @@ IP : 192.168.10.2
 Masque : 255.255.255.0  
 Passerelle : 192.168.10.1
 
-Activité :
-
-Configurer plusieurs machines avec :
+Maintenant, configurer deuxs machines avec :
 
 192.168.10.10  
 192.168.10.11  
-192.168.10.12
 
-Tester la communication avec :
-
-ping
+Tester la communication avec ping.
 
 Configurer ensuite volontairement deux machines avec la même adresse IP.
 
