@@ -55,8 +55,6 @@ Réseau Docker (LAN virtuel)
 Créer le fichier `docker-compose.yml` :
 
 ```yaml
-version: "3"
-
 services:
   serveur:
     image: python:3.9-slim
