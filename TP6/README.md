@@ -20,6 +20,19 @@ Pour plus de simplicité on bascule maintenant sur un environnement dockerisé. 
 > Docker est utilisé comme support expérimental.  
 > Les concepts réseau étudiés sont identiques à ceux vus précédemment.
 
+Quelques commandes docker qui pourront être utiles ?
+```console
+docker ps
+docker ps -a
+docker rm
+docker stop
+docker exec -it NAME-CONTAINER /bin/bash
+docker rm $(docker ps -a -q)
+docker compose up -d
+docker compose down
+docker network ls
+```
+
 ---
 
 ## Architecture du TP (à comprendre avant toute manipulation)
@@ -74,6 +87,8 @@ Lancer :
 ```bash
 docker compose up -d
 ```
+
+Ceci va nous permettre de créer automatiquement les machines qui nous intéressent...
 
 ---
 
