@@ -4,23 +4,23 @@
 
 ## Objectifs pédagogiques
 
-Pour plus de simplicité on bascule maintenant sur un environnement dockerisé. À l’issue de ce TP, vous devez être capables de :
+Pour plus de simplicité on bascule maintenant sur un environnement dockerisé. À l’issue de ce TP, vous devrez être capables dans ce nouvel environnement de :
 
 - Identifier et interpréter les interfaces réseau, adresses IP et routes
-- Comprendre la communication dans un réseau local (LAN)
-- Expliquer le rôle du DNS
-- Comprendre le principe de NAT (traduction d’adresse et redirection de ports)
-- Observer et analyser du trafic réseau
+- Comprendre la communication dans un réseau local (LAN) Docker
+- Expliquer le rôle du DNS et sa mise en oeuvre dans ce contexte
+- Comprendre le principe de NAT (traduction d’adresse et redirection de ports) lorsqu'il est appliqué à des réseaux Docker
+- Observer et analyser du trafic réseau et comprendre que des choses très similaires à ce que l'on a pu observer avant se passent ici
 - Faire des liens explicites avec les TP1–TP5
 
 ---
 
 ## Positionnement
 
-> Docker est utilisé comme support expérimental.  
-> Les concepts réseau étudiés sont identiques à ceux vus précédemment.
+> Docker est utilisé comme support expérimental afin d'accélérer la mise en oeuvre de systèmes/architectures. Tout ce qu'il y à en comprendre ici ? Cela permet de mettre en place des conteneurs ("alternative légère aux machines virtuelles") qui possèdent des interfaces réseau, des capacités de communication, etc.
+> Les concepts réseau étudiés sont identiques à ceux vus précédemment ils sont simplement mis en oeuvre différemment.
 
-Quelques commandes docker qui pourront être utiles ?
+Quelques commandes docker qui pourront être utiles pendant cette séance et celles à venir:
 ```console
 docker ps
 docker ps -a
@@ -38,7 +38,7 @@ docker network ls
 ## Architecture du TP (à comprendre avant toute manipulation)
 
 ```
-Machine étudiante (Mac)
+Machine étudiante (Mac) ou un Rasp si vous préférez
 
 localhost:8080
       │
@@ -65,7 +65,7 @@ Réseau Docker (LAN virtuel)
 
 # Partie 0 — Mise en place
 
-Créer le fichier `docker-compose.yml` :
+Créer le fichier `docker-compose.yml` suivant qui va nous permettre de lancer les conteneurs de notre réseau :
 
 ```yaml
 services:
@@ -94,7 +94,7 @@ Ceci va nous permettre de créer automatiquement les machines qui nous intéress
 
 # Partie 1 — Accès au service
 
-Accéder via navigateur :
+Accéder via navigateur à l'adresse suivante :
 
 http://localhost:8080
 
@@ -102,23 +102,28 @@ http://localhost:8080
 
 ## Questions
 
+Nous y reviendrons plus tard avec une vrai analyse mais réfléchissez déjà aux questions suivantes : 
+
 1. Qui répond à cette requête HTTP ?
-2. Le serveur écoute-t-il directement sur votre machine ?
-3. Faire un parallèle avec TP3 (serveur derrière un routeur/NAT)
+2. Le serveur écoute-t-il directement sur votre machine ? 
 
 ---
 
 # Partie 2 — Exploration réseau du client
 
-Entrer dans le conteneur :
+Entrer dans le conteneur client :
 
 ```bash
 docker exec -it <client> bash
 ```
 
+Pour trouver son nom ? Vous pouvez utiliser le docker compose ou les commandes Docker disponibles au début de ce sujet.
+
 ---
 
 ## Interfaces réseau
+
+Tout comme pour les Raspberry, on va aussi pouvoir affichier les informations réseau de notre conteneur docker :
 
 ```bash
 ip addr
@@ -135,6 +140,8 @@ ip addr
 
 ## Routage
 
+Là aussi des communications sont nécessaires : 
+
 ```bash
 ip route
 ```
@@ -149,8 +156,10 @@ ip route
 
 # Partie 3 — Communication interne
 
+On va maintenant valider le fonctionnement des communications entre les conteneurs ?
+
 ```bash
-ping serveur
+ping <serveur>
 curl serveur:8000
 ```
 
@@ -158,7 +167,7 @@ curl serveur:8000
 
 ## Questions
 
-1. Pourquoi le nom `serveur` fonctionne-t-il sans configuration ?
+1. Pourquoi le nom `>serveur>` fonctionne-t-il sans configuration ?
 2. Qui fournit cette résolution ?
 3. Est-ce un DNS Internet ?
 
@@ -172,7 +181,7 @@ curl serveur:8000
 
 # Partie 4 — Identifier l’IP du serveur
 
-Sur la machine :
+Sur votre Mac ou votre Rasp, on va maintenant faire quelques tests pour comprendre ce qui se passe :
 
 ```bash
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <serveur>
@@ -199,7 +208,7 @@ curl <IP_serveur>:8000
 
 # Partie 5 — NAT et redirection de port
 
-Accéder à :
+Accéder à nouveau à :
 
 http://localhost:8080
 
@@ -207,8 +216,10 @@ http://localhost:8080
 
 ## Questions fondamentales
 
-1. Pourquoi `localhost:8000` ne fonctionne pas ?
-2. Que signifie `8080:8000` ?
+Nous allons maintenant chercher à comprendre ce qui se passe
+
+1. Pourquoi `localhost:8000` ne fonctionne pas ? 
+2. Que pouvez vous observer dans le fichier Docker Compose ?
 3. Qui reçoit la requête sur 8080 ?
 4. Où est redirigé le trafic ?
 5. Faire le lien avec NAT (TP3)
@@ -223,13 +234,13 @@ http://localhost:8080
 
 # Partie 6 — Isolation réseau
 
-Créer un réseau :
+On va maintenant créer un réseau Docker :
 
 ```bash
 docker network create reseau2
 ```
 
-Créer un conteneur isolé :
+Créer un conteneur isolé à l'intérieur de ce réseau :
 
 ```bash
 docker run -dit --name iso --network reseau2 python:3.9-slim bash
@@ -238,6 +249,8 @@ docker run -dit --name iso --network reseau2 python:3.9-slim bash
 ---
 
 ## Test
+
+Essayez maintenant depuis le client ou le serveur
 
 ```bash
 ping iso
@@ -249,11 +262,13 @@ ping iso
 
 1. Pourquoi la communication échoue-t-elle ?
 2. Que représente un réseau Docker ?
-3. Faire le lien avec VLAN / segmentation réseau
+3. Est il donc possible d'avoir plusieurs sous réseaux dans un environnement Docker ?
 
 ---
 
 # Partie 7 — Ports ouverts
+
+Sur le serveur exécutez la commande suivante : 
 
 ```bash
 netstat -tuln
@@ -269,23 +284,30 @@ netstat -tuln
 
 ---
 
-# BONUS — Wireshark
+# Partie 7 — Wireshark
+
+On va maintenant essayer d'observer directement l'environnement que nous venons de mettre en place.
 
 ---
 
 ## Étapes
 
+Pour cela:
+
 1. Lancer Wireshark
 2. Capturer sur interface "any"
-3. Générer trafic :
+3. Générer du trafic depuis le client :
 
 ```bash
 curl serveur:8000
 ```
+Est ce que si on remplace <serveur> par son adresse IP les choses fonctionnent toujours ?
 
 ---
 
 ## Filtres
+
+Pour être sûr de l'observer que ce qui nous intéresse on peut chercher à utiliser différents filtres :
 
 ```
 http
@@ -309,6 +331,8 @@ ip.addr == <IP_serveur>
 
 ## Test NAT
 
+On va également observer ce qui se passe à un autre niveau : 
+
 ```bash
 curl localhost:8080
 ```
@@ -321,13 +345,19 @@ Comparer :
 - trafic interne Docker
 - trafic via NAT
 
+Est ce qu'il y a des différences notables avec la conversation juste entre conteneurs ?
+
 ---
 
-# BONUS POUR LES PLUS RAPIDES
+# Et pour finir
 
 ---
 
 ## IP dynamique
+
+On va observer une autre caractéristique de Docker ici : 
+
+Exécutez la commande s
 
 ```bash
 docker compose down && docker compose up -d
@@ -339,39 +369,26 @@ Questions :
 
 ---
 
-## Sans DNS
+## Inspection réseau
+
+On va finir par chercher à observer les réseaux docker.
+
+Pour ce faire, vous pouvez utiliser les commandes suivantes :
 
 ```bash
-curl <IP_serveur>:8000
-```
-
----
-
-## 🔹 Inspection réseau
-
-```bash
+docker network ls
 docker network inspect bridge
+docker network inspect <reseau2>
 ```
 
 Questions :
-- Subnet ?
-- Gateway ?
+- Est ce le même subnet ?
+- La même gateway ?
+- Est ce de l'IPv4 ou v6 ?
 
 ---
 
-# 🧠 Synthèse (obligatoire)
-
-| Réseau réel | Docker |
-|------------|--------|
-| Machine    |        |
-| Câble      |        |
-| Switch     |        |
-| DNS        |        |
-| NAT        |        |
-
----
-
-# 🎯 Conclusion
+# Conclusion
 
 - Un conteneur est une machine réseau
 - Docker crée un LAN virtuel
@@ -379,9 +396,3 @@ Questions :
 - Le port mapping correspond à du NAT
 - Les concepts réseau restent identiques
 
----
-
-## 📌 Message clé
-
-> Ce TP ne vous apprend pas Docker.  
-> Il vous permet de comprendre le réseau autrement.
