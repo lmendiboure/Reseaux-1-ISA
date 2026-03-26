@@ -1,4 +1,4 @@
-# TP6 — Réseaux virtualisés avec Docker : IP, DNS, NAT et observation (Version détaillée)
+# TP6 — Réseaux virtualisés avec Docker : IP, DNS, NAT et observation
 
 ---
 
