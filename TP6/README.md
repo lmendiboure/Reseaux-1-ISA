@@ -418,6 +418,121 @@ curl serveur2:9000
 - Est ce qu'un acccès externe est possible ? (ie depuis votre Mac) Si non que faudrait il changer pour le permettre ?
 - Et si on voulait permettre une communication entre deux sous réseaux docker, que faudrait il ajouter ? 
 
+# Bonus, l'alternative à Wireshark — Analyse du trafic avec tcpdump (sniffer réseau)
+
+---
+
+## Étape 1 — Ajouter un conteneur sniffer
+
+Modifier le `docker-compose.yml` :
+
+```yaml
+sniffer:
+  image: nicolaka/netshoot
+  command: sleep infinity
+  cap_add:
+    - NET_ADMIN
+    - NET_RAW
+```
+
+Relancer :
+
+```bash
+docker compose up -d
+```
+
+---
+
+## Étape 2 — Accéder au sniffer
+
+```bash
+docker exec -it <sniffer> bash
+```
+
+---
+
+## Étape 3 — Observer les interfaces
+
+```bash
+ip addr
+```
+
+---
+
+## Questions
+
+1. Quelle est l’adresse IP du sniffer ?
+2. Est-elle dans le même réseau que le client et le serveur ?
+3. Que représente ce conteneur dans le réseau ?
+
+---
+
+## Étape 4 — Capturer le trafic
+
+Lancer une capture :
+
+```bash
+tcpdump -i eth0
+```
+
+Laisser tourner cette commande.
+
+---
+
+## Étape 5 — Générer du trafic interne
+
+Dans le conteneur client :
+
+```bash
+curl serveur:8000
+```
+
+---
+
+## Questions
+
+1. Voyez-vous passer des paquets dans tcpdump ?
+2. Quelle est l’IP source ?
+3. Quelle est l’IP destination ?
+4. Le trafic reste-t-il dans le réseau Docker ?
+
+---
+
+## Étape 6 — Capturer le trafic NAT (accès externe)
+
+Depuis votre machine :
+
+```bash
+curl localhost:8080
+```
+
+---
+
+## Questions
+
+1. Voyez-vous passer du trafic dans tcpdump ?
+2. Les IP sont-elles identiques au cas précédent ?
+3. Le chemin du trafic est-il le même ?
+4. Où intervient la redirection de port ?
+
+---
+
+## Étape 7 — Filtrer le trafic
+
+Dans le sniffer :
+
+```bash
+tcpdump -i eth0 port 8000
+```
+
+---
+
+## Questions
+
+1. Pourquoi utiliser un filtre ?
+2. Quels paquets sont visibles maintenant ?
+3. Peut-on distinguer client et serveur ?
+
 
 ---
 
