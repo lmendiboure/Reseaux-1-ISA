@@ -353,7 +353,7 @@ Est ce qu'il y a des différences notables avec la conversation juste entre cont
 
 ---
 
-# Et pour finir
+# Et pour continuer
 
 ---
 
@@ -389,6 +389,35 @@ Questions :
 - Est ce le même subnet ?
 - La même gateway ?
 - Est ce de l'IPv4 ou v6 ?
+
+---
+
+# Et enfin — Ajouter un second serveur
+
+## Étapes
+
+Dans le docker compose, ajouter :
+
+```yaml
+  serveur2:
+    image: python:3.9-slim
+    command: bash -c "apt update && apt install -y iproute2 iputils-ping net-tools curl && python3 -m http.server 9000"
+```
+
+Testez depuis le client :
+
+```bash
+curl serveur2:9000
+```
+
+---
+
+## Questions
+
+- Est ce qu'on est toujours sur le même réseau ?
+- Est ce qu'un acccès externe est possible ? (ie depuis votre Mac) Si non que faudrait il changer pour le permettre ?
+- Et si on voulait permettre une communication entre deux sous réseaux docker, que faudrait il ajouter ? 
+
 
 ---
 
