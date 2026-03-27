@@ -158,6 +158,8 @@ ip route
 
 On va maintenant valider le fonctionnement des communications entre les conteneurs ?
 
+Pour cela sur le conteneur client, lancez
+
 ```bash
 ping <serveur>
 curl serveur:8000
@@ -167,7 +169,7 @@ curl serveur:8000
 
 ## Questions
 
-1. Pourquoi le nom `>serveur>` fonctionne-t-il sans configuration ?
+1. Pourquoi le nom `<serveur>` fonctionne-t-il sans configuration ?
 2. Qui fournit cette résolution ?
 3. Est-ce un DNS Internet ?
 
@@ -190,6 +192,8 @@ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <se
 ---
 
 ## Tests
+
+Une nouvelle fois depuis le conteneur client, lancez les commandes suivantes : 
 
 ```bash
 ping <IP_serveur>
