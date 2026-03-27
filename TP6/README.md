@@ -316,7 +316,7 @@ Pour ce faire, vous pouvez utiliser les commandes suivantes :
 
 ```bash
 docker network ls
-docker network inspect docker1_default
+docker network inspect <nom_du_dossier>
 docker network inspect <reseau2>
 ```
 
