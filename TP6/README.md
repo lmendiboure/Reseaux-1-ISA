@@ -381,7 +381,7 @@ Pour ce faire, vous pouvez utiliser les commandes suivantes :
 
 ```bash
 docker network ls
-docker network inspect bridge
+docker network inspect docker1_default
 docker network inspect <reseau2>
 ```
 
