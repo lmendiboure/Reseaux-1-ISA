@@ -431,6 +431,10 @@ curl serveur:8000
 3. Quelle est l’IP destination ?
 4. Le trafic reste-t-il dans le réseau Docker ?
 
+Pourquoi ne voit on pas tout ? Que devrait on faire si on voulait pouvoir visualiser l'ensemble de paquets ?
+
+Mettez en oeuvre une telle solution !
+
 ---
 
 ## Étape 6 — Capturer le trafic NAT (accès externe)
