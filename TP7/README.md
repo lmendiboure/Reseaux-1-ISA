@@ -1,4 +1,4 @@
-# TP7 — Routage et NAT avec Docker (SNAT + DNAT) — Version enrichie complète
+# TP7 — Routage et NAT avec Docker (SNAT + DNAT)
 
 ---
 
