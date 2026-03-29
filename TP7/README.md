@@ -227,7 +227,7 @@ ping 10.20.0.10
 
 1. Pourquoi le routeur est-il joignable ?
 2. Pourquoi le serveur ne l’est-il pas ?
-3. Le paquet part-il déjà vers le routeur, ou est-il bloqué avant ?
+3. Le paquet part-il déjà vers le routeur, ou est-il bloqué avant ? Pour répondre à cette question connectez vous au routeur et lancez `tcpdump` sur ses différentes interfaces 
 
 ---
 
@@ -614,6 +614,7 @@ curl 10.10.0.254:8080
 2. Quelle est la destination réelle après transformation ?
 3. Pourquoi cette transformation doit-elle être appliquée avant la décision de routage ?
 4. Que se passerait-il si on essayait de faire le DNAT après le routage ?
+5. Peut on faire du DNAT sans du SNAT dans notre exemple ?
 
 ### À retenir
 
