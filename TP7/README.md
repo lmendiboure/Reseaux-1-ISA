@@ -139,7 +139,7 @@ Est-ce encore vrai avec un `/24` ?
 
 ## À comprendre avant de commencer
 
-Avant toute manipulation, prenez quelques minutes pour répondre mentalement aux questions suivantes :
+Avant de commencer essayer également de répondre aux questions suivantes :
 
 1. Le client et les serveurs sont-ils dans le même réseau ?
 2. Si un paquet doit quitter le réseau `10.10.0.0/24`, qui décide où il va ?
@@ -147,9 +147,6 @@ Avant toute manipulation, prenez quelques minutes pour répondre mentalement aux
 4. Si un serveur reçoit un paquet, comment sait-il à qui répondre ?
 5. Si l’on veut accéder à plusieurs serveurs derrière un même routeur, comment peut-on les distinguer ?
 
-Ce TP repose sur une idée centrale :
-
-> Un paquet ne se déplace jamais “tout seul”. Il est toujours guidé par une configuration réseau.
 ---
 
 ## Partie 0 — Mise en place
@@ -161,6 +158,8 @@ services:
   client:
     image: nicolaka/netshoot
     command: sleep infinity
+    cap_add:
+      - NET_ADMIN
     networks:
       netA:
         ipv4_address: 10.10.0.10
@@ -168,6 +167,8 @@ services:
   serveur:
     image: python:3.9-slim
     command: bash -c "apt update && apt install -y iproute2 iputils-ping net-tools curl tcpdump && python3 -m http.server 8000"
+    cap_add:
+      - NET_ADMIN
     networks:
       netB:
         ipv4_address: 10.20.0.10
@@ -228,10 +229,6 @@ ping 10.20.0.10
 2. Pourquoi le serveur ne l’est-il pas ?
 3. Le paquet part-il déjà vers le routeur, ou est-il bloqué avant ?
 
-### À retenir
-
-À ce stade, le client sait joindre une machine présente dans son propre réseau local, mais il ne sait pas comment atteindre un réseau différent.
-
 ---
 
 ## Partie 2 — Mise en place de la passerelle par défaut
@@ -260,7 +257,7 @@ Si le client ne connaît pas le réseau distant, à qui doit-il envoyer les paqu
 
 ### Étape 3 — Construire et appliquer la commande
 
-On souhaite pour gérer cela ajouter une route par défaut (ou remplacer celle qui existe déjà... Pour ce faire vous pouvez la supprimer avec : `ip route del default`).
+On souhaite pour gérer cela ajouter une route.
 
 Éléments disponibles :
 
@@ -369,7 +366,7 @@ Si le serveur ne connaît pas le réseau du client, à qui doit-il envoyer les r
 
 ### Étape 3 — Construire et appliquer la commande
 
-On va faire exactement comme côté client et ajouter une route par défaut ici ou remplacer celle existante par celle qui nous convient..
+On va faire exactement comme côté client et ajouter une route ici aussi pour atteindre le client.
 
 ### Étape 4 — Tester
 
@@ -487,7 +484,7 @@ iptables -t ______ -A __________ -o ______ -j __________
 Dans le conteneur `serveur`, supprimez la route retour :
 
 ```bash
-ip route del default
+ip route del ..... via ....
 ```
 
 Puis, depuis le client :
