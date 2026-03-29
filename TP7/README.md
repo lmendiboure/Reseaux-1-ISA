@@ -25,17 +25,17 @@ Vous allez manipuler deux réseaux distincts.
 ```text
 Réseau A (LAN client)              Réseau B (LAN serveurs)
 
-172.18.0.0/16                     172.19.0.0/16
+10.10.0.0/24                     10.20.0.0/24
 
-client (172.18.0.10)
+client (10.10.0.10)
         |
         |
-routeur (172.18.0.1 / 172.19.0.1)
+routeur (10.10.0.254 / 10.20.0.254)
         |
         |
 -----------------------------
         |
-serveur1 (172.19.0.10:8000)
+serveur1 (10.20.0.10:8000)
 ```
 - le client appartient au réseau A ;
 - le serveur appartient au réseau B ;
@@ -44,12 +44,105 @@ serveur1 (172.19.0.10:8000)
 
 ---
 
+# Exercice 0 - Petit retour sur le subnetting 
+
+Avant de lancer les conteneurs, on va vérifier que les adresses choisies sont cohérentes.
+
+On rappelle :
+
+- réseau A : `10.10.0.0/24`
+- réseau B : `10.20.0.0/24`
+
+---
+
+## Question 1 — Taille des réseaux
+
+Combien d’adresses IPv4 contient un réseau `/24` ?
+
+- [ ] 64  
+- [ ] 128  
+- [ ] 256  
+- [ ] 1024  
+
+---
+
+## Question 2 — Partie réseau / partie hôte
+
+Dans une adresse IPv4 en `/24`, combien de bits appartiennent :
+
+- à la partie réseau ?
+- à la partie hôte ?
+
+Compléter :
+
+- partie réseau : `______` bits  
+- partie hôte : `______` bits  
+
+---
+
+## Question 3 — Identifier l’adresse réseau
+
+Parmi les adresses suivantes, lesquelles appartiennent au réseau `10.10.0.0/24` ?
+
+- [ ] 10.10.0.10  
+- [ ] 10.10.0.254  
+- [ ] 10.10.1.10  
+- [ ] 10.10.0.0  
+- [ ] 10.10.0.255  
+
+---
+
+## Question 4 — Identifier les adresses spéciales
+
+Dans un réseau `/24`, certaines adresses ne peuvent pas être attribuées à une machine.
+
+Pour le réseau `10.10.0.0/24`, compléter :
+
+- adresse réseau : `__________`  
+- adresse de broadcast : `__________`  
+
+---
+
+## Question 5 — Vérifier la cohérence de nos choix
+
+On veut attribuer :
+
+- client : `10.10.0.10`  
+- routeur côté A : `10.10.0.254`  
+- serveur1 : `10.20.0.10`  
+- serveur2 : `10.20.0.20`  
+- routeur côté B : `10.20.0.254`  
+
+Ces adresses sont-elles valides ?
+
+- [ ] Oui, toutes  
+- [ ] Non, certaines correspondent à des adresses réservées  
+- [ ] Non, certaines ne sont pas dans le bon réseau  
+
+---
+
+## Question 6 — Changer le masque
+
+Supposons maintenant que le réseau B soit `10.20.0.0/16` au lieu de `10.20.0.0/24`.
+
+Est-ce que `10.20.1.15` appartiendrait au même réseau que `10.20.0.10` ?
+
+- [ ] Oui  
+- [ ] Non  
+
+Est-ce encore vrai avec un `/24` ?
+
+- [ ] Oui  
+- [ ] Non
+
+---
+
 ## À comprendre avant de commencer
 
 Avant toute manipulation, prenez quelques minutes pour répondre mentalement aux questions suivantes :
 
 1. Le client et les serveurs sont-ils dans le même réseau ?
-2. Si un paquet doit quitter le réseau `172.18.0.0/16`, qui décide où il va ?
+2. Si un paquet doit quitter le réseau `10.10.0.0/24`, qui décide où il va ?
 3. Que se passe-t-il si aucune route n’est définie ?
 4. Si un serveur reçoit un paquet, comment sait-il à qui répondre ?
 5. Si l’on veut accéder à plusieurs serveurs derrière un même routeur, comment peut-on les distinguer ?
@@ -64,22 +157,20 @@ Ce TP repose sur une idée centrale :
 Créer le fichier docker-compose.yml :
 
 ```yaml
-version: "3"
-
 services:
   client:
     image: nicolaka/netshoot
     command: sleep infinity
     networks:
       netA:
-        ipv4_address: 172.18.0.10
+        ipv4_address: 10.10.0.10
 
   serveur:
     image: python:3.9-slim
-    command: python3 -m http.server 8000
+    command: bash -c "apt update && apt install -y iproute2 iputils-ping net-tools curl tcpdump && python3 -m http.server 8000"
     networks:
       netB:
-        ipv4_address: 172.19.0.10
+        ipv4_address: 10.20.0.10
 
   routeur:
     image: nicolaka/netshoot
@@ -88,19 +179,19 @@ services:
       - NET_ADMIN
     networks:
       netA:
-        ipv4_address: 172.18.0.1
+        ipv4_address: 10.10.0.254
       netB:
-        ipv4_address: 172.19.0.1
+        ipv4_address: 10.20.0.254
 
 networks:
   netA:
     ipam:
       config:
-        - subnet: 172.18.0.0/16
+        - subnet: 10.10.0.0/24
   netB:
     ipam:
       config:
-        - subnet: 172.19.0.0/16
+        - subnet: 10.20.0.0/24
 ```
 
 Lancez ensuite l’environnement :
@@ -127,8 +218,8 @@ docker exec <completer> bash
 ### Étape 2 — Tester la connectivité
 
 ```bash
-ping 172.18.0.1
-ping 172.19.0.10
+ping 10.10.0.254
+ping 10.20.0.10
 ```
 
 ### Questions
@@ -159,7 +250,7 @@ ip route
 
 Que constatez-vous ?
 
-- [ ] Le réseau `172.19.0.0/16` est connu
+- [ ] Le réseau `10.20.0.0/16` est connu
 - [ ] Le client ne connaît que son réseau local
 - [ ] Une route par défaut existe déjà
 
@@ -169,7 +260,7 @@ Si le client ne connaît pas le réseau distant, à qui doit-il envoyer les paqu
 
 ### Étape 3 — Construire et appliquer la commande
 
-On souhaite pour gérer cela ajouter une route par défaut.
+On souhaite pour gérer cela ajouter une route par défaut (ou remplacer celle qui existe déjà... Pour ce faire vous pouvez la supprimer avec : `ip route del default`).
 
 Éléments disponibles :
 
@@ -187,13 +278,13 @@ ip route ______ ______ via __________
 ### Étape 5 — Tester
 
 ```bash
-ping 172.19.0.10
+ping 10.20.0.10
 ```
 
 ### Questions
 
 1. Que signifie le mot `default` dans cette commande ?
-2. Quel est le rôle de `172.18.0.1` ?
+2. Quel est le rôle de `10.10.0.254` ?
 3. Pourquoi cela ne fonctionne-t-il toujours pas ?
 4. Le paquet part-il maintenant vers le routeur ?
 
@@ -219,7 +310,7 @@ Sur quelle machine faut-il intervenir ?
 
 ### Étape 2 — Se placer dans le routeur
 
-Dans un nouveau terminal connectez vous au rour
+Dans un nouveau terminal connectez vous au routeur
 
 ### Étape 3 — Comprendre le problème
 
@@ -239,6 +330,8 @@ Pour cela écritez simplement 1 dans le fichier ci-dessous.
 ```text
 /proc/sys/net/ipv4/ip_forward
 ```
+
+Vous pouvez potentiellement utiliser une commande du type : `echo ___ > /proc/sys/net/ipv4/ip_forward`
 
 ### Étape 6 — Tester
 
@@ -270,26 +363,26 @@ ip route
 
 ### Question
 
-Le serveur connaît-il le réseau `172.18.0.0/16` ?
+Le serveur connaît-il le réseau `10.10.0.0/24` ?
 
 Si le serveur ne connaît pas le réseau du client, à qui doit-il envoyer les réponses ?
 
 ### Étape 3 — Construire et appliquer la commande
 
-On va faire exactement comme côté client et ajouter une route par défaut ici
+On va faire exactement comme côté client et ajouter une route par défaut ici ou remplacer celle existante par celle qui nous convient..
 
 ### Étape 4 — Tester
 
 Depuis le serveur :
 
 ```bash
-ping 172.18.0.10
+ping 10.10.0.10
 ```
 
 Puis, depuis le client :
 
 ```bash
-curl 172.19.0.10:8000
+curl 10.20.0.10:8000
 ```
 
 ### Questions
@@ -400,7 +493,7 @@ ip route del default
 Puis, depuis le client :
 
 ```bash
-curl 172.19.0.10:8000
+curl 10.20.0.10:8000
 ```
 
 ### Questions
@@ -431,7 +524,7 @@ tcpdump -i eth0
 Depuis le client, dans un autre terminal :
 
 ```bash
-curl 172.19.0.10:8000
+curl 10.20.0.10:8000
 ```
 
 ### Questions
@@ -456,13 +549,13 @@ Le client va maintenant envoyer une requête vers le routeur, mais on veut que c
 Exemple :
 
 ```bash
-curl 172.18.0.1:8080
+curl 10.10.0.254:8080
 ```
 
 On souhaite en réalité atteindre :
 
 ```text
-172.19.0.10:8000
+10.20.0.10:8000
 ```
 
 ### Étape 1 — Identifier le problème
@@ -515,7 +608,7 @@ iptables -t ______ -A __________ -p ___ --dport ____ \
 Depuis le client :
 
 ```bash
-curl 172.18.0.1:8080
+curl 10.10.0.254:8080
 ```
 
 ### Questions
@@ -537,8 +630,8 @@ Le DNAT modifie la destination avant le routage, sinon le routeur prendrait sa d
 
 Vous disposez maintenant de deux serveurs derrière le même routeur :
 
-- `serveur1` sur `172.19.0.10:8000`
-- `serveur2` sur `172.19.0.20:9000`
+- `serveur1` sur `10.20.0.10:8000`
+- `serveur2` sur `10.20.0.20:9000`
 
 ### Question
 
@@ -565,13 +658,13 @@ Pour distinguer plusieurs services derrière un même point d’entrée, on peut
 On veut que :
 
 ```bash
-curl 172.18.0.1:9090
+curl 10.10.0.254:9090
 ```
 
 atteigne en réalité :
 
 ```text
-172.19.0.20:9000
+10.20.0.20:9000
 ```
 
 ### Étape 1 — Reprendre le raisonnement
@@ -594,7 +687,7 @@ iptables -t ______ -A __________ -p ___ --dport ____ \
 Depuis le client :
 
 ```bash
-curl 172.18.0.1:9090
+curl 10.10.0.254:9090
 ```
 
 ### Questions
@@ -631,7 +724,7 @@ tcpdump -i eth0
 Depuis le client :
 
 ```bash
-curl 172.18.0.1:9090
+curl 10.10.0.254:9090
 ```
 
 ### Questions
