@@ -213,7 +213,7 @@ docker ps
 ### Étape 1 — Se placer dans le client
 
 ```bash
-docker exec <completer> bash
+docker exec -it <completer> bash
 ```
 
 ### Étape 2 — Tester la connectivité
