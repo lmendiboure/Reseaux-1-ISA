@@ -741,7 +741,7 @@ Justification :
 
 ### Étape 4 — Expérience
 
-Configurer un `DNAT` (si déjà vu) :
+Configurer un `DNAT` :
 
 ```bash
 iptables -t nat -A PREROUTING -p tcp --dport 8080   -j DNAT --to-destination 10.20.0.10:8000
