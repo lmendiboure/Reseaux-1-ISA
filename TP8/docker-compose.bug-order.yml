@@ -1,0 +1,3 @@
+services:
+  routeur:
+    command: ["/router/bug-order.sh"]
