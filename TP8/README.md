@@ -905,13 +905,13 @@ Le but n’est pas de “trouver la réponse dans le compose”, mais de diagnos
 
 ### Étape 1 — Symptôme
 
-Selon le mode :
+Selon le mode (si fichier bug-order):
 
 ```bash
 curl 10.20.0.10:8000
 ```
 
-ou
+ou (si fichier dnat)
 
 ```bash
 curl 10.10.0.254:8080
