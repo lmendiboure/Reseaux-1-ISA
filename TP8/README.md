@@ -89,14 +89,6 @@ docker compose up -d --build
 docker ps
 ```
 
-Questions :
-
-- Les quatre conteneurs attendus sont-ils présents ?  
-  → ____________________________________________________________
-
-- Tous les conteneurs sont-ils bien démarrés ?  
-  → ____________________________________________________________
-
 ---
 
 ## Partie 0 bis — Remise en place du routage
@@ -164,35 +156,14 @@ curl 10.20.0.10:8000
 
 ---
 
-## Partie 2 — Bloquer tout le trafic (version enrichie)
+## Partie 2 — Bloquer tout le trafic
 
 ### Objectif
 
 Dans cette partie, vous allez montrer qu’un firewall peut bloquer un paquet, même si le routage fonctionne parfaitement.  
 Autrement dit : *un paquet peut savoir où aller, mais ne pas avoir le droit d’y aller*.
 
-### Étape 1 — Vérification de référence
-
-Avant toute modification, vérifier que la communication fonctionne.
-
-Dans le client :
-
-```bash
-curl 10.20.0.10:8000
-```
-
-Questions :
-
-- La communication fonctionne-t-elle ?  
-  → ____________________________________________________________
-
-- Le paquet traverse-t-il le routeur ?  
-  → ____________________________________________________________
-
-- Le firewall intervient-il déjà ?  
-  → ____________________________________________________________
-
-### Étape 2 — Réflexion
+### Étape 1 — Réflexion
 
 On veut maintenant empêcher toute communication entre les deux réseaux.
 
@@ -208,7 +179,7 @@ Expliquez votre choix :
 
 → ____________________________________________________________
 
-### Étape 3 — Choix de la chaîne
+### Étape 2 — Choix de la chaîne
 
 Le trafic traverse le routeur : il n’est ni destiné au routeur, ni émis par lui.  
 Il faut donc identifier la chaîne correspondant à ce cas.
@@ -226,7 +197,7 @@ Expliquez brièvement pourquoi les deux autres chaînes ne conviennent pas :
 - `INPUT` : _________________________________________________
 - `OUTPUT` : ________________________________________________
 
-### Étape 4 — Construction de la commande
+### Étape 3 — Construction de la commande
 
 Éléments disponibles :
 
@@ -247,7 +218,7 @@ Commande complète écrite par vos soins :
 ____________________________________________________________
 ```
 
-### Étape 5 — Test
+### Étape 4 — Test
 
 Dans le client :
 
@@ -259,7 +230,7 @@ Résultat observé :
 
 → ____________________________________________________________
 
-### Étape 6 — Observation
+### Étape 5 — Observation
 
 Dans le routeur :
 
@@ -275,7 +246,7 @@ Questions :
 - Les compteurs évoluent-ils ?  
   → ____________________________________________________________
 
-### Étape 7 — Analyse avec `tcpdump`
+### Étape 3 — Analyse avec `tcpdump`
 
 Dans le routeur, observer les deux interfaces.
 
@@ -314,7 +285,7 @@ Questions :
 - Le firewall modifie-t-il le paquet ou le bloque-t-il ?  
   → ____________________________________________________________
 
-### Étape 8 — Vérifier le comportement du retour
+### Étape 7 — Vérifier le comportement du retour
 
 Dans le serveur :
 
@@ -333,7 +304,7 @@ Questions :
 - Quelle règle ou politique est responsable de ce comportement ?  
   → ____________________________________________________________
 
-### Étape 9 — Compréhension fine
+### Étape 8 — Compréhension fine
 
 Compléter :
 
@@ -343,7 +314,7 @@ Le paquet :
 - est analysé par le firewall : _______________________________
 - est transmis vers le serveur : ______________________________
 
-### Étape 10 — Discussion
+### Étape 9 — Discussion
 
 Répondez avec des phrases complètes.
 
@@ -358,7 +329,7 @@ Répondez avec des phrases complètes.
 
 ---
 
-## Partie 3 — Autoriser un seul sens (version enrichie)
+## Partie 3 — Autoriser un seul sens 
 
 ### Objectif
 
@@ -466,7 +437,7 @@ Expliquez pourquoi :
 
 ---
 
-## Partie 4 — Autoriser le retour (version enrichie)
+## Partie 4 — Autoriser le retour
 
 ### Objectif
 
@@ -546,7 +517,7 @@ Expliquez cela avec vos mots :
 
 ---
 
-## Partie 5 — Firewall stateful (`conntrack` détaillé)
+## Partie 5 — Firewall stateful 
 
 ### Objectif
 
@@ -653,7 +624,7 @@ Expliquez précisément en quoi il simplifie la configuration :
 
 ---
 
-## Partie 6 — Ordre des règles (version renforcée)
+## Partie 6 — Ordre des règles 
 
 ### Objectif
 
@@ -728,7 +699,7 @@ Expliquez pourquoi cette propriété est critique en diagnostic :
 
 ---
 
-## Partie 7 — Interaction avec NAT (version approfondie)
+## Partie 7 — Interaction avec NAT 
 
 ### Objectif
 
@@ -809,7 +780,7 @@ Expliquez cette phrase :
 
 ---
 
-## Partie 8 — Conception complète d’un firewall (version avancée)
+## Partie 8 — Conception complète d’un firewall 
 
 ### Objectif
 
