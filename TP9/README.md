@@ -131,7 +131,7 @@ nslookup serveur1
 
 ### Travail demandé
 
-Expliquer précisément pourquoi cette commande échoue.
+Expliquez à quoi sert la commande `nslookup` ? Expliquer précisément pourquoi cette commande échoue dans le cas présent.
 
 ---
 
