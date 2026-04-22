@@ -139,6 +139,13 @@ Expliquez à quoi sert la commande `nslookup` ? Expliquer précisément pourquoi
 
 Dans le conteneur client :
 
+Commencez par nettoyer le fichiers hosts:
+```bash
+printf "127.0.0.1 localhost\n" > /etc/hosts
+```
+
+Puis mettez à jour le fichier resolv:
+
 ```bash
 echo "nameserver 10.20.0.53" > /etc/resolv.conf
 ```
@@ -239,7 +246,76 @@ Relier le résultat à la configuration DNS.
 
 ---
 
-## Partie 7 — Priorité de résolution
+## Partie 7 — Effet du cache DNS et cohérence
+
+### Objectif
+
+Comprendre pourquoi une modification DNS n’est pas immédiatement visible.
+
+### Étape 1
+
+```bash
+nslookup serveur1
+```
+
+Noter l’IP.
+
+### Étape 2
+
+Modifier :
+
+```
+address=/serveur1/10.20.0.10
+```
+
+en :
+
+```
+address=/serveur1/10.20.0.20
+```
+
+### Étape 3
+
+```bash
+docker compose restart dns
+```
+
+### Étape 4
+
+```bash
+nslookup serveur1
+```
+
+Observer.
+
+### Étape 5
+
+```bash
+curl http://serveur1:8000
+```
+
+Identifier le serveur réellement contacté.
+
+### Étape 6
+
+Expliquer le rôle du cache DNS.
+
+### Étape 7
+
+```bash
+docker compose restart client
+nslookup serveur1
+```
+
+Comparer.
+
+### Étape 8
+
+Réflexion sur avantages / limites du cache DNS.
+
+---
+
+## Partie 8 — Priorité de résolution
 
 Dans le conteneur client :
 
@@ -266,7 +342,7 @@ Quel mécanisme du système explique cette priorité ?
 
 ---
 
-## Partie 8 — Diagnostic d’un problème
+## Partie 9 — Diagnostic d’un problème
 
 Sur la machine hôte :
 
@@ -308,7 +384,7 @@ Proposer une correction.
 
 ---
 
-## Partie 9 — Diagnostic multi-cas
+## Partie 10 — Diagnostic multi-cas
 
 Analyser les situations suivantes :
 
