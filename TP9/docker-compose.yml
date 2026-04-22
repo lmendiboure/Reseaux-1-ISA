@@ -1,0 +1,63 @@
+services:
+  client:
+    image: nicolaka/netshoot
+    command: sleep infinity
+    cap_add:
+      - NET_ADMIN
+    networks:
+      netA:
+        ipv4_address: 10.10.0.10
+
+  serveur1:
+    build:
+      context: ./server
+    command: python3 -m http.server 8000
+    cap_add:
+      - NET_ADMIN
+    networks:
+      netB:
+        ipv4_address: 10.20.0.10
+
+  serveur2:
+    build:
+      context: ./server
+    command: python3 -m http.server 9000
+    cap_add:
+      - NET_ADMIN
+    networks:
+      netB:
+        ipv4_address: 10.20.0.20
+
+  dns:
+    build:
+      context: ./dns
+    command: ["dnsmasq", "-k"]
+    cap_add:
+      - NET_ADMIN
+    networks:
+      netB:
+        ipv4_address: 10.20.0.53
+
+  routeur:
+    build:
+      context: ./router
+    command: sleep infinity
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      net.ipv4.ip_forward: "1"
+    networks:
+      netA:
+        ipv4_address: 10.10.0.254
+      netB:
+        ipv4_address: 10.20.0.254
+
+networks:
+  netA:
+    ipam:
+      config:
+        - subnet: 10.10.0.0/24
+  netB:
+    ipam:
+      config:
+        - subnet: 10.20.0.0/24
