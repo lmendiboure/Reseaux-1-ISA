@@ -24,6 +24,7 @@ Un problème peut apparaître à n’importe quelle étape.
 
 ## Architecture
 
+```text
 client (10.10.0.10)  
         |  
 routeur (10.10.0.254 / 10.20.0.254)  
@@ -33,6 +34,7 @@ routeur (10.10.0.254 / 10.20.0.254)
 serveur1 (10.20.0.10:8000)  
 serveur2 (10.20.0.20:9000)  
 dns      (10.20.0.53)  
+```
 
 ---
 
