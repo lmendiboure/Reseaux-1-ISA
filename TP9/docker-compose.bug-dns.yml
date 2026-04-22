@@ -1,0 +1,5 @@
+services:
+  dns:
+    build:
+      context: ./dns-bug
+    command: ["dnsmasq", "-k"]
