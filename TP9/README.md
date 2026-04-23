@@ -408,6 +408,147 @@ Analyser les situations suivantes :
 
 Associer chaque cas à une cause et justifier votre réponse.
 
+# POur aller plus loin — DNS multi-niveaux (résolution en chaîne)
+
+## Objectif
+
+Dans cet exercice, vous allez découvrir qu’un serveur DNS ne répond pas nécessairement toujours directement à une requête. Il peut aussi transmettre la demande à un autre serveur DNS, qui dispose de l’information recherchée.
+
+L’objectif est de comprendre qu’une résolution DNS peut s’effectuer en plusieurs étapes, et qu’il peut exister une forme de hiérarchie ou de chaînage entre serveurs.
+
+---
+
+## Principe
+
+On met en place le chemin suivant :
+
+client → DNS1 → DNS2 → IP
+
+Dans ce scénario :
+
+- le client interroge DNS1 ;
+- DNS1 ne possède pas directement la réponse ;
+- DNS1 transmet la requête à DNS2 ;
+- DNS2 fournit l’adresse IP ;
+- la réponse revient ensuite jusqu’au client.
+
+---
+
+## Étape 1 — Ajouter un second serveur DNS
+
+Dans le fichier `docker-compose.yml`, ajouter le service suivant :
+
+```yaml
+  dns2:
+    build:
+      context: ./dns2
+    command: ["dnsmasq", "-k"]
+    networks:
+      netB:
+        ipv4_address: 10.20.0.54
+```
+
+---
+
+## Étape 2 — Configurer DNS2
+
+Créer ou modifier le fichier `dns2/dnsmasq.conf` avec le contenu suivant :
+
+```conf
+no-daemon
+log-queries
+log-facility=-
+address=/serveur1/10.20.0.10
+```
+
+---
+
+## Étape 3 — Modifier DNS1 pour qu’il relaie la requête
+
+Dans le fichier `dns/dnsmasq.conf`, remplacer :
+
+```conf
+address=/serveur1/10.20.0.10
+```
+
+par :
+
+```conf
+server=/serveur1/10.20.0.54
+```
+
+### Travail demandé
+
+Expliquer la différence entre les deux écritures suivantes :
+
+```conf
+address=/serveur1/10.20.0.10
+```
+
+et
+
+```conf
+server=/serveur1/10.20.0.54
+```
+
+---
+
+## Étape 4 — Redémarrer l’architecture
+
+Sur la machine hôte :
+
+```bash
+docker compose up -d --build
+```
+
+---
+
+## Étape 5 — Tester la résolution
+
+Dans le conteneur client :
+
+```bash
+nslookup serveur1
+```
+
+### Travail demandé
+
+**Q1 — Observation**  
+Le nom `serveur1` est-il toujours résolu ?
+
+→ ____________________________________________________________
+
+**Q2 — Compréhension**  
+Quel serveur fournit réellement la réponse finale ? Quel chemin suit une requête DNS ?
+
+→ ____________________________________________________________
+
+---
+
+## Étape 6 — Vérifier avec tcpdump
+
+Dans le conteneur DNS1 :
+
+```bash
+tcpdump -i eth0 port 53
+```
+
+Dans le conteneur DNS2 :
+
+```bash
+tcpdump -i eth0 port 53
+```
+
+Puis, dans le conteneur client :
+
+```bash
+nslookup serveur1
+```
+
+### Travail demandé
+
+Décrire ce que vous observez dans chaque conteneur.
+
 ---
 
 ## Conclusion
