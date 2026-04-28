@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
 
   client:
@@ -32,11 +34,15 @@ services:
   dns1:
     image: debian:stable-slim
     container_name: dns1
-    command: sh -c "apt update && apt install -y dnsmasq tcpdump iproute2 && dnsmasq -k"
+    command: sh -c "
+      apt update &&
+      DEBIAN_FRONTEND=noninteractive apt install -y dnsmasq tcpdump iproute2 &&
+      dnsmasq -k --conf-file=/dnsmasq.conf
+    "
     cap_add:
       - NET_ADMIN
     volumes:
-      - ./dns1/dnsmasq.conf:/etc/dnsmasq.conf
+      - ./dns1.conf:/dnsmasq.conf
     networks:
       netB:
         ipv4_address: 10.20.0.53
@@ -44,9 +50,13 @@ services:
   dns2:
     image: debian:stable-slim
     container_name: dns2
-    command: sh -c "apt update && apt install -y dnsmasq tcpdump iproute2 && dnsmasq -k"
+    command: sh -c "
+      apt update &&
+      DEBIAN_FRONTEND=noninteractive apt install -y dnsmasq tcpdump iproute2 &&
+      dnsmasq -k --conf-file=/dnsmasq.conf
+    "
     volumes:
-      - ./dns2/dnsmasq.conf:/etc/dnsmasq.conf
+      - ./dns2.conf:/dnsmasq.conf
     networks:
       netB:
         ipv4_address: 10.20.0.54
