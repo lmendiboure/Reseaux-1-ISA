@@ -3,7 +3,7 @@ services:
   client:
     image: nicolaka/netshoot
     container_name: client
-    command: sleep infinity
+    command: sh -c "ip addr flush dev eth0 && sleep infinity"
     cap_add:
       - NET_ADMIN
     networks:
